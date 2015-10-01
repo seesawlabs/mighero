@@ -1,4 +1,4 @@
-# mighero
+# mighero - Migration Hero
 SQL Migration Tool that uses our config files.
 
 ### TO DO
