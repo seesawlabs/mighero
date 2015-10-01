@@ -1,6 +1,8 @@
 # mighero
 SQL Migration Tool that uses our config files.
 
+### TO DO
+
 - [ ] Add ```migration_dir``` to the default.yml (Golang-api)
 - [ ] Add ```driver``` to the default.yml (Golang-api)
 ```yaml
