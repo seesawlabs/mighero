@@ -11,11 +11,11 @@ import (
 	"time"
 
 	"github.com/fatih/color"
+	"github.com/kountable/mighero/vendor/gopkg.in/yaml.v2"
 	"github.com/mattes/migrate/file"
 	"github.com/mattes/migrate/migrate"
 	"github.com/mattes/migrate/migrate/direction"
 	pipep "github.com/mattes/migrate/pipe"
-	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -27,6 +27,7 @@ const (
 	cmdDown    = "down"
 	cmdReset   = "reset"
 	cmdRedo    = "redo"
+	cmdGoto    = "goto"
 )
 
 //Configuration struce is a map of the config file.
@@ -133,9 +134,52 @@ func main() {
 		////////// VERSION END ///////////////
 
 	case cmdReset:
-		fallthrough
+		timerStart = time.Now()
+		pipe := pipep.New()
+		go migrate.Reset(pipe, url, migrationDir)
+		ok := writePipe(pipe)
+		printTimer()
+		if !ok {
+			os.Exit(1)
+		}
+		////////// RESET END ///////////////
+
 	case cmdRedo:
-		fmt.Println("Not implemented yet.")
+		timerStart = time.Now()
+		pipe := pipep.New()
+		go migrate.Redo(pipe, url, migrationDir)
+		ok := writePipe(pipe)
+		printTimer()
+		if !ok {
+			os.Exit(1)
+		}
+		////////// REDO END ///////////////
+
+	case cmdGoto:
+		toVersion := flag.Arg(1)
+		toVersionInt, err := strconv.Atoi(toVersion)
+		if err != nil || toVersionInt < 0 {
+			fmt.Println("Unable to parse param <v>.")
+			os.Exit(1)
+		}
+
+		currentVersion, err := migrate.Version(url, migrationDir)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		relativeNInt := toVersionInt - int(currentVersion)
+
+		timerStart = time.Now()
+		pipe := pipep.New()
+		go migrate.Migrate(pipe, url, migrationDir, relativeNInt)
+		ok := writePipe(pipe)
+		printTimer()
+		if !ok {
+			os.Exit(1)
+		}
+		////////// GOTO  END ///////////////
 
 	default:
 		fallthrough
@@ -143,64 +187,6 @@ func main() {
 		helpCmd()
 	}
 }
-
-//
-// 	case "goto":
-// 		verifyMigrationsPath(*migrationsPath)
-// 		toVersion := flag.Arg(1)
-// 		toVersionInt, err := strconv.Atoi(toVersion)
-// 		if err != nil || toVersionInt < 0 {
-// 			fmt.Println("Unable to parse param <v>.")
-// 			os.Exit(1)
-// 		}
-//
-// 		currentVersion, err := migrate.Version(*url, *migrationsPath)
-// 		if err != nil {
-// 			fmt.Println(err)
-// 			os.Exit(1)
-// 		}
-//
-// 		relativeNInt := toVersionInt - int(currentVersion)
-//
-// 		timerStart = time.Now()
-// 		pipe := pipep.New()
-// 		go migrate.Migrate(pipe, *url, *migrationsPath, relativeNInt)
-// 		ok := writePipe(pipe)
-// 		printTimer()
-// 		if !ok {
-// 			os.Exit(1)
-// 		}
-//
-
-// 	case "redo":
-// 		verifyMigrationsPath(*migrationsPath)
-// 		timerStart = time.Now()
-// 		pipe := pipep.New()
-// 		go migrate.Redo(pipe, *url, *migrationsPath)
-// 		ok := writePipe(pipe)
-// 		printTimer()
-// 		if !ok {
-// 			os.Exit(1)
-// 		}
-//
-// 	case "reset":
-// 		verifyMigrationsPath(*migrationsPath)
-// 		timerStart = time.Now()
-// 		pipe := pipep.New()
-// 		go migrate.Reset(pipe, *url, *migrationsPath)
-// 		ok := writePipe(pipe)
-// 		printTimer()
-// 		if !ok {
-// 			os.Exit(1)
-// 		}
-//
-//
-// 	default:
-// 		fallthrough
-// 	case "help":
-// 		helpCmd()
-// 	}
-// }
 
 func writePipe(pipe chan interface{}) (ok bool) {
 	okFlag := true
@@ -210,31 +196,30 @@ func writePipe(pipe chan interface{}) (ok bool) {
 			case item, more := <-pipe:
 				if !more {
 					return okFlag
-				} else {
-					switch item.(type) {
+				}
 
-					case string:
-						fmt.Println(item.(string))
+				switch item.(type) {
+				case string:
+					fmt.Println(item.(string))
 
-					case error:
-						c := color.New(color.FgRed)
-						c.Println(item.(error).Error(), "\n")
-						okFlag = false
+				case error:
+					c := color.New(color.FgRed)
+					c.Println(item.(error).Error())
+					okFlag = false
 
-					case file.File:
-						f := item.(file.File)
-						c := color.New(color.FgBlue)
-						if f.Direction == direction.Up {
-							c.Print(">")
-						} else if f.Direction == direction.Down {
-							c.Print("<")
-						}
-						fmt.Printf(" %s\n", f.FileName)
-
-					default:
-						text := fmt.Sprint(item)
-						fmt.Println(text)
+				case file.File:
+					f := item.(file.File)
+					c := color.New(color.FgBlue)
+					if f.Direction == direction.Up {
+						c.Print(">")
+					} else if f.Direction == direction.Down {
+						c.Print("<")
 					}
+					fmt.Printf(" %s\n", f.FileName)
+
+				default:
+					text := fmt.Sprint(item)
+					fmt.Println(text)
 				}
 			}
 		}
