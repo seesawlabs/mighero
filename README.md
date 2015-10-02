@@ -1,24 +1,35 @@
 # mighero - Migration Hero
 SQL Migration Tool that uses our config files.
 
-### TO DO
+### Usage
 
-- [x] Add ```migration_dir``` to the default.yml (Golang-api)
-- [x] Add ```driver``` to the default.yml (Golang-api)
+You need to be in the project root directory (mighero search for the config files in env/ folder) to execute the command.
 
-Example 
+you can change this behavior by specified the path to the default and env config file, using -def and -env flags.
 
-```yaml
-default:
-    ...
-    db: &db_default
-        ip: localhost:3306
-        user: 
-        password: 
-        name: kountable
-        migration_dir: ./migrations
-        driver: mysql
-    ...
+
+```shell
+$ mighero create InitDatabase
+Version 2 migration files created in db/migrations:
+0001_InitDatabase.up.sql
+0001_InitDatabase.down.sql
+
+$ tree db/migrations
+db/migrations
+├── 0001_InitDatabase.down.sql
+├── 0001_InitDatabase.up.sql
+
+$ mighero up                
+> 0001_InitDatabase.up.sql
+
+0.0677 seconds
+
+$ mighero down
+< 0001_InitDatabase.down.sql
+
+0.0751 seconds
+
 ```
 
-Use the [Migrate](github.com/mattes/migrate) Lib.
+
+This project use the [Migrate](github.com/mattes/migrate) Lib.
