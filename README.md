@@ -1,6 +1,10 @@
 # mighero - Migration Hero
 SQL Migration Tool that uses our config files.
 
+### Installation
+
+``` go get github.com/kountable/mighero/cmd/mighero ```
+
 ### Usage
 
 You need to be in the project root directory (mighero search for the config files in env/ folder) to execute the command.
