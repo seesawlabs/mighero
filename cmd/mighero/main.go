@@ -52,16 +52,14 @@ var path struct {
 	ToEnv     string
 }
 
-func init() {
+func main() {
 	flag.Usage = func() {
 		helpCmd()
 	}
 	flag.StringVar(&path.ToDefault, "def", "env/default.yml", "the default configuration file.")
 	flag.StringVar(&path.ToEnv, "env", "env/local.yml", "the environment configuration file.")
 	flag.Parse()
-}
 
-func main() {
 	cmd := flag.Arg(0)
 
 	c, err := initConfig(path.ToDefault, path.ToEnv)
