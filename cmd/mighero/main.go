@@ -60,6 +60,9 @@ func main() {
 	flag.StringVar(&path.ToEnv, "env", "env/local.yml", "the environment configuration file.")
 	flag.Parse()
 
+	fmt.Println("Def config -", path.ToDefault)
+	fmt.Println("Env config -", path.ToEnv)
+
 	cmd := flag.Arg(0)
 
 	c, err := initConfig(path.ToDefault, path.ToEnv)
