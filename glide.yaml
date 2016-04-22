@@ -1,0 +1,15 @@
+package: github.com/kountable/mighero
+import:
+- package: github.com/fatih/color
+- package: github.com/gemnasium/migrate
+  subpackages:
+  - driver/bash
+  - driver/cassandra
+  - driver/mysql
+  - driver/postgres
+  - driver/sqlite3
+  - file
+  - migrate
+  - migrate/direction
+  - pipe
+- package: gopkg.in/yaml.v2

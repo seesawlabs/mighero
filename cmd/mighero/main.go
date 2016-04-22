@@ -11,15 +11,15 @@ import (
 	"time"
 
 	"github.com/fatih/color"
-	_ "github.com/mattes/migrate/driver/bash"
-	_ "github.com/mattes/migrate/driver/cassandra"
-	_ "github.com/mattes/migrate/driver/mysql"
-	_ "github.com/mattes/migrate/driver/postgres"
-	_ "github.com/mattes/migrate/driver/sqlite3"
-	"github.com/mattes/migrate/file"
-	"github.com/mattes/migrate/migrate"
-	"github.com/mattes/migrate/migrate/direction"
-	pipep "github.com/mattes/migrate/pipe"
+	_ "github.com/gemnasium/migrate/driver/bash"
+	_ "github.com/gemnasium/migrate/driver/cassandra"
+	_ "github.com/gemnasium/migrate/driver/mysql"
+	_ "github.com/gemnasium/migrate/driver/postgres"
+	_ "github.com/gemnasium/migrate/driver/sqlite3"
+	"github.com/gemnasium/migrate/file"
+	"github.com/gemnasium/migrate/migrate"
+	"github.com/gemnasium/migrate/migrate/direction"
+	pipep "github.com/gemnasium/migrate/pipe"
 	"gopkg.in/yaml.v2"
 )
 
@@ -57,7 +57,7 @@ func main() {
 		helpCmd()
 	}
 	flag.StringVar(&path.ToDefault, "def", "env/default.yml", "the default configuration file.")
-	flag.StringVar(&path.ToEnv, "env", "env/local.yml", "the environment configuration file.")
+	flag.StringVar(&path.ToEnv, "env", "env/docker.yml", "the environment configuration file.")
 	flag.Parse()
 
 	fmt.Println("Def config -", path.ToDefault)
