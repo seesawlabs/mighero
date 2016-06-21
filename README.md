@@ -3,7 +3,7 @@ SQL Migration Tool that uses our config files.
 
 ### Installation
 
-``` go get github.com/kountable/mighero/cmd/mighero ```
+``` go get github.com/seesawlabs/mighero/cmd/mighero ```
 
 ### Usage
 
