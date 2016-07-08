@@ -9,6 +9,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"net"
 
 	"github.com/fatih/color"
 	_ "github.com/gemnasium/migrate/driver/bash"
@@ -83,7 +84,15 @@ func main() {
 			os.Exit(1)
 		}
 
+
 		migrationFile, err := migrate.Create(url, migrationDir, name)
+		switch e := err.(type){
+		case *net.OpError:
+			fmt.Println(fmt.Sprintf("Can't connect to the DB: %s. Error: %s" , url, e))
+		}
+//		pretty.Println("=============    (╯°□°）╯︵ ┻━┻)   =============")
+//		pretty.Println(err)
+//		pretty.Println("=============    ┬─┬ノ( º _ ºノ)   =============")
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
