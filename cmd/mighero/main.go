@@ -36,11 +36,6 @@ const (
 	cmdGoto    = "goto"
 )
 
-//Configuration struce is a map of the config file.
-type Configuration struct {
-	Databases map[string]interface{} `yaml:"databases"`
-}
-
 var path struct {
 	ToDefault string
 	ToEnv     string
