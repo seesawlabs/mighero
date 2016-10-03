@@ -87,10 +87,30 @@ func main() {
 		return
 	}
 
+	driver := c[path.Section]["driver"].(string)
+	var url string
+
+	switch driver {
+	case "postgres":
+		url = fmt.Sprintf("%s://%s:%s@%s/%s?sslmode=disable", driver,
+			c[path.Section]["user"].(string),
+			c[path.Section]["password"].(string),
+			c[path.Section]["ip"].(string),
+			c[path.Section]["name"].(string))
+
+	case "mysql":
+		url = fmt.Sprintf("%s://%s:%s@tcp(%s)/%s", driver,
+			c[path.Section]["user"].(string),
+			c[path.Section]["password"].(string),
+			c[path.Section]["ip"].(string),
+			c[path.Section]["name"].(string))
+	default:
+		fmt.Printf("Error: unknown driver '%s'\n", driver)
+		return
+
+	}
+
 	migrationDir := c[path.Section]["migration_dir"].(string)
-
-	url := fmt.Sprintf("%s://%s:%s@tcp(%s)/%s", c[path.Section]["driver"].(string), c[path.Section]["user"].(string), c[path.Section]["password"].(string), c[path.Section]["ip"].(string), c[path.Section]["name"].(string))
-
 	switch cmd {
 	case cmdCreate:
 
