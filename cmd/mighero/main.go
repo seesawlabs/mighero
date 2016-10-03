@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"os"
 	"strconv"
 	"time"
-	"net"
 
 	"github.com/fatih/color"
 	_ "github.com/gemnasium/migrate/driver/bash"
@@ -38,19 +38,13 @@ const (
 
 //Configuration struce is a map of the config file.
 type Configuration struct {
-	DB struct {
-		IP           string `yaml:"ip"`
-		User         string `yaml:"user"`
-		Password     string `yaml:"password"`
-		Name         string `yaml:"name"`
-		MigrationDir string `yaml:"migration_dir"`
-		Driver       string `yaml:"driver"`
-	} `yaml:"db"`
+	Databases map[string]interface{} `yaml:"databases"`
 }
 
 var path struct {
 	ToDefault string
 	ToEnv     string
+	Section   string
 }
 
 func main() {
@@ -59,10 +53,15 @@ func main() {
 	}
 	flag.StringVar(&path.ToDefault, "def", "env/default.yml", "the default configuration file.")
 	flag.StringVar(&path.ToEnv, "env", "env/docker.yml", "the environment configuration file.")
+	flag.StringVar(&path.Section, "section", "db", "the section from config file")
 	flag.Parse()
 
+	fmt.Println("--------------------------------")
 	fmt.Println("Def config -", path.ToDefault)
 	fmt.Println("Env config -", path.ToEnv)
+	fmt.Println("Section -", path.Section)
+	fmt.Println("--------------------------------")
+	fmt.Println()
 
 	cmd := flag.Arg(0)
 
@@ -71,9 +70,31 @@ func main() {
 		log.Fatal(err)
 	}
 
-	migrationDir := c.DB.MigrationDir
+	// Validation parameters
+	switch {
+	case c[path.Section]["migration_dir"] == nil:
+		fmt.Println("Error: please set 'migration_dir' parameter in DB config")
+		return
+	case c[path.Section]["driver"] == nil:
+		fmt.Println("Error: please set 'driver' parameter in DB config")
+		return
+	case c[path.Section]["user"] == nil:
+		fmt.Println("Error: please set 'user' parameter in DB config")
+		return
+	case c[path.Section]["password"] == nil:
+		fmt.Println("Error: please set 'password' parameter in DB config")
+		return
+	case c[path.Section]["ip"] == nil:
+		fmt.Println("Error: please set 'ip' parameter in DB config")
+		return
+	case c[path.Section]["name"] == nil:
+		fmt.Println("Error: please set 'name' parameter in DB config")
+		return
+	}
 
-	url := fmt.Sprintf("%s://%s:%s@tcp(%s)/%s", c.DB.Driver, c.DB.User, c.DB.Password, c.DB.IP, c.DB.Name)
+	migrationDir := c[path.Section]["migration_dir"].(string)
+
+	url := fmt.Sprintf("%s://%s:%s@tcp(%s)/%s", c[path.Section]["driver"].(string), c[path.Section]["user"].(string), c[path.Section]["password"].(string), c[path.Section]["ip"].(string), c[path.Section]["name"].(string))
 
 	switch cmd {
 	case cmdCreate:
@@ -84,15 +105,14 @@ func main() {
 			os.Exit(1)
 		}
 
-
 		migrationFile, err := migrate.Create(url, migrationDir, name)
-		switch e := err.(type){
+		switch e := err.(type) {
 		case *net.OpError:
-			fmt.Println(fmt.Sprintf("Can't connect to the DB: %s. Error: %s" , url, e))
+			fmt.Println(fmt.Sprintf("Can't connect to the DB: %s. Error: %s", url, e))
 		}
-//		pretty.Println("=============    (╯°□°）╯︵ ┻━┻)   =============")
-//		pretty.Println(err)
-//		pretty.Println("=============    ┬─┬ノ( º _ ºノ)   =============")
+		//		pretty.Println("=============    (╯°□°）╯︵ ┻━┻)   =============")
+		//		pretty.Println(err)
+		//		pretty.Println("=============    ┬─┬ノ( º _ ºノ)   =============")
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -269,7 +289,7 @@ Commands:
 `)
 }
 
-func initConfig(defaultConfigPath, envConfigPath string) (*Configuration, error) {
+func initConfig(defaultConfigPath, envConfigPath string) (map[string]map[string]interface{}, error) {
 	def, err := ioutil.ReadFile(defaultConfigPath)
 	if err != nil {
 		return nil, err
@@ -284,7 +304,7 @@ func initConfig(defaultConfigPath, envConfigPath string) (*Configuration, error)
 
 	buf.Write(env)
 
-	cMap := map[string]*Configuration{}
+	cMap := map[string]map[string]map[string]interface{}{}
 
 	if err = yaml.Unmarshal(buf.Bytes(), cMap); err != nil {
 		return nil, err
