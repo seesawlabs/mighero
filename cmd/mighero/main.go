@@ -60,57 +60,57 @@ func main() {
 
 	cmd := flag.Arg(0)
 
-	c, err := initConfig(path.ToDefault, path.ToEnv)
+	c, err := initConfig(path.ToDefault, path.ToEnv, path.Section)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Validation parameters
 	switch {
-	case c[path.Section]["migration_dir"] == nil:
+	case c["migration_dir"] == nil:
 		fmt.Println("Error: please set 'migration_dir' parameter in DB config")
 		return
-	case c[path.Section]["driver"] == nil:
+	case c["driver"] == nil:
 		fmt.Println("Error: please set 'driver' parameter in DB config")
 		return
-	case c[path.Section]["user"] == nil:
+	case c["user"] == nil:
 		fmt.Println("Error: please set 'user' parameter in DB config")
 		return
-	case c[path.Section]["password"] == nil:
+	case c["password"] == nil:
 		fmt.Println("Error: please set 'password' parameter in DB config")
 		return
-	case c[path.Section]["ip"] == nil:
+	case c["ip"] == nil:
 		fmt.Println("Error: please set 'ip' parameter in DB config")
 		return
-	case c[path.Section]["name"] == nil:
+	case c["name"] == nil:
 		fmt.Println("Error: please set 'name' parameter in DB config")
 		return
 	}
 
-	driver := c[path.Section]["driver"].(string)
+	driver := c["driver"].(string)
 	var url string
 
 	switch driver {
 	case "postgres":
 		url = fmt.Sprintf("%s://%s:%s@%s/%s?sslmode=disable", driver,
-			c[path.Section]["user"].(string),
-			c[path.Section]["password"].(string),
-			c[path.Section]["ip"].(string),
-			c[path.Section]["name"].(string))
+			c["user"].(string),
+			c["password"].(string),
+			c["ip"].(string),
+			c["name"].(string))
 
 	case "mysql":
 		url = fmt.Sprintf("%s://%s:%s@tcp(%s)/%s", driver,
-			c[path.Section]["user"].(string),
-			c[path.Section]["password"].(string),
-			c[path.Section]["ip"].(string),
-			c[path.Section]["name"].(string))
+			c["user"].(string),
+			c["password"].(string),
+			c["ip"].(string),
+			c["name"].(string))
 	default:
 		fmt.Printf("Error: unknown driver '%s'\n", driver)
 		return
 
 	}
 
-	migrationDir := c[path.Section]["migration_dir"].(string)
+	migrationDir := c["migration_dir"].(string)
 	switch cmd {
 	case cmdCreate:
 
@@ -304,7 +304,7 @@ Commands:
 `)
 }
 
-func initConfig(defaultConfigPath, envConfigPath string) (map[string]map[string]interface{}, error) {
+func initConfig(defaultConfigPath, envConfigPath, section string) (map[string]interface{}, error) {
 	def, err := ioutil.ReadFile(defaultConfigPath)
 	if err != nil {
 		return nil, err
@@ -319,11 +319,26 @@ func initConfig(defaultConfigPath, envConfigPath string) (map[string]map[string]
 
 	buf.Write(env)
 
-	cMap := map[string]map[string]map[string]interface{}{}
+	cMap := map[string]map[string]interface{}{}
 
 	if err = yaml.Unmarshal(buf.Bytes(), cMap); err != nil {
 		return nil, err
 	}
 
-	return cMap["config"], nil
+	if _, ok := cMap["config"][section]; !ok {
+		return nil, fmt.Errorf("Section in config is undefined")
+	}
+
+	getSectionBytes, err := yaml.Marshal(cMap["config"][section])
+	if err != nil {
+		return nil, err
+	}
+
+	sectionMap := map[string]interface{}{}
+
+	if err = yaml.Unmarshal(getSectionBytes, sectionMap); err != nil {
+		return nil, err
+	}
+
+	return sectionMap, nil
 }
