@@ -76,6 +76,8 @@ func main() {
 	case c["user"] == nil:
 		fmt.Println("Error: please set 'user' parameter in DB config")
 		return
+	case c["password"] == nil:
+		c["password"] = ""
 	case c["ip"] == nil:
 		fmt.Println("Error: please set 'ip' parameter in DB config")
 		return
