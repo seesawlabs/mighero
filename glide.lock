@@ -1,55 +1,53 @@
-hash: ab9def674340662c7df07f1c23393d275b5773465ea624f1df3756f6b28bfa77
-updated: 2016-04-21T16:26:44.334334897+01:00
+hash: 3d9ced5218c62e0e044db949cdc6cab541703639ce06096fb5a6e816ddbdbe99
+updated: 2017-05-01T23:23:00.087168981+03:00
 imports:
 - name: github.com/fatih/color
-  version: 533cd7fd8a85905f67a1753afb4deddc85ea174f
+  version: 9131ab34cf20d2f6d83fdc67168a5430d1c7dc23
 - name: github.com/gemnasium/migrate
-  version: 66bcf6a0b470c25994b8ced36b13468dfd8d98f8
+  version: 0e161f43df9892cb6f29f16cdbc98b50caa12d55
   subpackages:
+  - driver
   - driver/bash
   - driver/cassandra
   - driver/mysql
   - driver/postgres
-  - driver/sqlite3
   - file
   - migrate
   - migrate/direction
   - pipe
-  - driver
 - name: github.com/go-sql-driver/mysql
-  version: 7ebe0a500653eeb1859664bed5e48dec1e164e73
+  version: 147bd02c2c516cf9a8878cb75898ee8a9eea0228
 - name: github.com/gocql/gocql
-  version: 1440c609669494bcb31b1e300e8d2ef51e205dd3
+  version: 79434f238fe5c76efa88f8ed131adefe5b31a0d1
   subpackages:
   - internal/lru
   - internal/murmur
   - internal/streams
 - name: github.com/golang/snappy
-  version: 774a97396f7bfa4165e9dcf4bfa0747ea3edcc02
+  version: 553a641470496b2327abcac10b36396bd98e45c9
 - name: github.com/hailocab/go-hostpool
   version: e80d13ce29ede4452c43dea11e79b9bc8a15b478
+- name: github.com/jmoiron/sqlx
+  version: d9bd385d68c068f1fabb5057e3dedcbcbb039d0f
+  subpackages:
+  - reflectx
 - name: github.com/lib/pq
-  version: 3cd0097429be7d611bb644ef85b42bfb102ceea4
+  version: 2704adc878c21e1329f46f6e56a1c387d788ff94
   subpackages:
   - oid
 - name: github.com/mattn/go-colorable
-  version: 9cbef7c35391cca05f15f8181dc0b18bc9736dbb
+  version: 5411d3eea5978e6cdc258b30de592b60df6aba96
   repo: https://github.com/mattn/go-colorable
 - name: github.com/mattn/go-isatty
-  version: 56b76bdf51f7708750eac80fa38b952bb9f32639
+  version: 57fdcb988a5c543893cc61bce354a6e24ab70022
   repo: https://github.com/mattn/go-isatty
-- name: github.com/mattn/go-sqlite3
-  version: 467f50b0c026317ad28fc2c0a08aab6f755cfc7a
-- name: golang.org/x/net
-  version: 815d315ead425c4365077d904a2331ee9e179820
-  subpackages:
-  - context
 - name: golang.org/x/sys
-  version: f64b50fbea64174967a8882830d621a18ee1548e
+  version: e24f485414aeafb646f6fca458b0bf869c0880a1
+  repo: https://go.googlesource.com/sys
   subpackages:
   - unix
 - name: gopkg.in/inf.v0
   version: 3887ee99ecf07df5b447e9b00d9c0b2adaa9f3e4
 - name: gopkg.in/yaml.v2
-  version: a83829b6f1293c91addabc89d0571c246397bbf4
-devImports: []
+  version: cd8b52f8269e0feb286dfeef29f8fe4d5b397e0b
+testImports: []
