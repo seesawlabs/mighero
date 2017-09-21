@@ -69,15 +69,19 @@ func main() {
 	dbPasswordFromEnv := os.Getenv("K_DB_PASSWORD")
 	dbIPFromEnv := os.Getenv("K_DB_IP")
 	dbPortFromEnv := os.Getenv("K_DB_PORT")
+	dbNameFromEnv := os.Getenv("K_DB_NAME")
+
 	dbTestUserFromEnv := os.Getenv("K_TEST_MODE_DB_USER")
 	dbTestPasswordFromEnv := os.Getenv("K_TEST_MODE_DB_PASSWORD")
 	dbTestIPFromEnv := os.Getenv("K_TEST_MODE_DB_IP")
 	dbTestPortFromEnv := os.Getenv("K_TEST_MODE_DB_PORT")
+	dbTestNameFromEnv := os.Getenv("K_TEST_MODE_DB_NAME")
+
 	dbRedshiftUserFromEnv := os.Getenv("K_REDSHIFT_USER")
 	dbRedshiftPasswordFromEnv := os.Getenv("K_REDSHIFT_PASSWORD")
 	dbRedshiftIPFromEnv := os.Getenv("K_REDSHIFT_IP")
 	dbRedshiftPortFromEnv := os.Getenv("K_REDSHIFT_PORT")
-
+	dbRedshiftNameFromEnv := os.Getenv("K_REDSHIFT_NAME")
 	if path.Section == "db" {
 		if len(dbUserFromEnv) > 0 {
 			c["user"] = dbUserFromEnv
@@ -88,6 +92,10 @@ func main() {
 
 		if len(dbIPFromEnv) > 0 && len(dbPortFromEnv) > 0 {
 			c["ip"] = fmt.Sprintf("%s:%s", dbIPFromEnv, dbPortFromEnv)
+		}
+
+		if len(dbNameFromEnv) > 0 {
+			c["name"] = dbNameFromEnv
 		}
 	} else if path.Section == "test_mode_db" {
 		if len(dbTestUserFromEnv) > 0 {
@@ -100,6 +108,10 @@ func main() {
 		if len(dbTestIPFromEnv) > 0 && len(dbTestPortFromEnv) > 0 {
 			c["ip"] = fmt.Sprintf("%s:%s", dbTestIPFromEnv, dbTestPortFromEnv)
 		}
+
+		if len(dbTestNameFromEnv) > 0 {
+			c["name"] = dbTestNameFromEnv
+		}
 	} else if path.Section == "redshift" {
 		if len(dbRedshiftUserFromEnv) > 0 {
 			c["user"] = dbRedshiftUserFromEnv
@@ -110,6 +122,10 @@ func main() {
 
 		if len(dbRedshiftIPFromEnv) > 0 && len(dbRedshiftPortFromEnv) > 0 {
 			c["ip"] = fmt.Sprintf("%s:%s", dbRedshiftIPFromEnv, dbRedshiftPortFromEnv)
+		}
+
+		if len(dbRedshiftNameFromEnv) > 0 {
+			c["name"] = dbRedshiftNameFromEnv
 		}
 	}
 
