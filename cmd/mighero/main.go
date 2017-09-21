@@ -67,10 +67,16 @@ func main() {
 	//TODO: use env lib to store in a struct
 	dbUserFromEnv := os.Getenv("K_DB_USER")
 	dbPasswordFromEnv := os.Getenv("K_DB_PASSWORD")
+	dbIPFromEnv := os.Getenv("K_DB_IP")
+	dbPortFromEnv := os.Getenv("K_DB_PORT")
 	dbTestUserFromEnv := os.Getenv("K_TEST_MODE_DB_USER")
 	dbTestPasswordFromEnv := os.Getenv("K_TEST_MODE_DB_PASSWORD")
+	dbTestIPFromEnv := os.Getenv("K_TEST_MODE_DB_IP")
+	dbTestPortFromEnv := os.Getenv("K_TEST_MODE_DB_PORT")
 	dbRedshiftUserFromEnv := os.Getenv("K_REDSHIFT_USER")
 	dbRedshiftPasswordFromEnv := os.Getenv("K_REDSHIFT_PASSWORD")
+	dbRedshiftIPFromEnv := os.Getenv("K_REDSHIFT_IP")
+	dbRedshiftPortFromEnv := os.Getenv("K_REDSHIFT_PORT")
 
 	if path.Section == "db" {
 		if len(dbUserFromEnv) > 0 {
@@ -79,6 +85,10 @@ func main() {
 		if len(dbPasswordFromEnv) > 0 {
 			c["password"] = dbPasswordFromEnv
 		}
+
+		if len(dbIPFromEnv) > 0 && len(dbPortFromEnv) > 0 {
+			c["ip"] = fmt.Sprintf("%s:%s", dbIPFromEnv, dbPortFromEnv)
+		}
 	} else if path.Section == "test_mode_db" {
 		if len(dbTestUserFromEnv) > 0 {
 			c["user"] = dbTestUserFromEnv
@@ -86,12 +96,20 @@ func main() {
 		if len(dbTestPasswordFromEnv) > 0 {
 			c["password"] = dbTestPasswordFromEnv
 		}
+
+		if len(dbTestIPFromEnv) > 0 && len(dbTestPortFromEnv) > 0 {
+			c["ip"] = fmt.Sprintf("%s:%s", dbTestIPFromEnv, dbTestPortFromEnv)
+		}
 	} else if path.Section == "redshift" {
 		if len(dbRedshiftUserFromEnv) > 0 {
 			c["user"] = dbRedshiftUserFromEnv
 		}
 		if len(dbRedshiftPasswordFromEnv) > 0 {
 			c["password"] = dbRedshiftPasswordFromEnv
+		}
+
+		if len(dbRedshiftIPFromEnv) > 0 && len(dbRedshiftPortFromEnv) > 0 {
+			c["ip"] = fmt.Sprintf("%s:%s", dbRedshiftIPFromEnv, dbRedshiftPortFromEnv)
 		}
 	}
 
