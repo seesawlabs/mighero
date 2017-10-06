@@ -61,7 +61,7 @@ func main() {
 
 	c, err := initConfig(path.ToDefault, path.ToEnv, path.Section)
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("%s, trying environment variables", err)
 	}
 
 	//TODO: use env lib to store in a struct
