@@ -376,12 +376,11 @@ func initConfig(defaultConfigPath, envConfigPath, section string) (map[string]in
 
 	buf := bytes.NewBuffer(def)
 
-	env, err := ioutil.ReadFile(envConfigPath)
-	if err != nil {
-		return nil, err
+	if env, err := ioutil.ReadFile(envConfigPath); err == nil {
+		buf.Write(env)
+	} else {
+		log.Printf("could not read env configuration, proceeding with defaults only: %s", err)
 	}
-
-	buf.Write(env)
 
 	cMap := map[string]map[string]interface{}{}
 
