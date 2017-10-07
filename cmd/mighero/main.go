@@ -376,9 +376,11 @@ func initConfig(defaultConfigPath, envConfigPath, section string) (map[string]in
 
 	buf := bytes.NewBuffer(def)
 
+	configPart := "config"
 	if env, err := ioutil.ReadFile(envConfigPath); err == nil {
 		buf.Write(env)
 	} else {
+		configPart = "default"
 		log.Printf("could not read env configuration, proceeding with defaults only: %s", err)
 	}
 
@@ -388,11 +390,11 @@ func initConfig(defaultConfigPath, envConfigPath, section string) (map[string]in
 		return nil, err
 	}
 
-	if _, ok := cMap["config"][section]; !ok {
-		return nil, fmt.Errorf("Section in config is undefined")
+	if _, ok := cMap[configPart][section]; !ok {
+		return nil, fmt.Errorf("section '%s' in config is undefined in config part '%s'", section, configPart)
 	}
 
-	getSectionBytes, err := yaml.Marshal(cMap["config"][section])
+	getSectionBytes, err := yaml.Marshal(cMap[configPart][section])
 	if err != nil {
 		return nil, err
 	}
