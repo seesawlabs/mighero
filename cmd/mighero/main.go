@@ -62,6 +62,7 @@ func main() {
 	c, err := initConfig(path.ToDefault, path.ToEnv, path.Section)
 	if err != nil {
 		log.Printf("%s, trying environment variables", err)
+		c = map[string]interface{}{}
 	}
 
 	//TODO: use env lib to store in a struct
